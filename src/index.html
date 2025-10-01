@@ -1,0 +1,152 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #fff;
+            margin: 0;
+            padding: 40px;
+        }
+        .container {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .header-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.2em;
+        }
+        .header-desc {
+            color: #888;
+            font-size: 1.1rem;
+        }
+        .add-btn {
+            background: #111;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .add-btn:active {
+            background: #222;
+        }
+        .search-bar {
+            margin: 32px 0 0 0;
+        }
+        .search-input {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+            font-size: 1.1rem;
+            outline: none;
+        }
+        .expenses-list {
+            text-align: center;
+            color: #888;
+            font-size: 1.2rem;
+            margin: 48px 0;
+        }
+        .summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 2px solid #eee;
+            padding: 24px 0 0 0;
+            font-size: 1.3rem;
+        }
+        .summary-label {
+            font-weight: bold;
+        }
+        .summary-value {
+            font-weight: bold;
+            font-size: 2rem;
+        }
+        @media (max-width: 700px) {
+            .container {
+                padding: 12px;
+            }
+            .header-title {
+                font-size: 1.5rem;
+            }
+            .summary-value {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <div class="header-title">Expense Tracker</div>
+                <div class="header-desc">Track your expenses</div>
+            </div>
+            <button class="add-btn" onclick="addExpense()">
+                <span style="font-size:1.2em;">&#8853;</span> Add Expense
+            </button>
+        </div>
+        <div class="search-bar">
+            <input class="search-input" type="text" id="search" placeholder="Search expenses..." oninput="filterExpenses()">
+        </div>
+        <div class="expenses-list" id="expenses-list">
+            No expenses yet. Add your first expense to get started.
+        </div>
+        <div class="summary">
+            <span class="summary-label">Total Expenses</span>
+            <span class="summary-value" id="total-expenses">$0.00</span>
+        </div>
+    </div>
+    <script>
+        let expenses = [];
+        function addExpense() {
+            const name = prompt('Expense name:');
+            if (!name) return;
+            const amount = prompt('Amount (USD):');
+            const value = parseFloat(amount);
+            if (isNaN(value) || value < 0) {
+                alert('Please enter a valid amount.');
+                return;
+            }
+            expenses.push({ name, amount: value });
+            renderExpenses();
+        }
+        function renderExpenses() {
+            const search = document.getElementById('search').value.toLowerCase();
+            const filtered = expenses.filter(e => e.name.toLowerCase().includes(search));
+            const list = document.getElementById('expenses-list');
+            if (filtered.length === 0) {
+                list.innerHTML = 'No expenses yet. Add your first expense to get started.';
+            } else {
+                list.innerHTML = '<ul style="list-style:none;padding:0;margin:0;">' +
+                    filtered.map(e => `<li style='display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #eee;'><span>${e.name}</span><span>$${e.amount.toFixed(2)}</span></li>`).join('') + '</ul>';
+            }
+            const total = filtered.reduce((sum, e) => sum + e.amount, 0);
+            document.getElementById('total-expenses').textContent = `$${total.toFixed(2)}`;
+        }
+        function filterExpenses() {
+            renderExpenses();
+        }
+    </script>
+</body>
+</html>
